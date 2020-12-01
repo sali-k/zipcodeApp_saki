@@ -11,3 +11,6 @@ web-build/
 
 # macOS
 .DS_Store
+
+# API gitの管理対象から外す
+src/api.json
