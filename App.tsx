@@ -23,14 +23,22 @@ export default function App() {
   //住所を受け取るフック
   const [zipcode, setZipcode] = useState<string>("");
   const [addresses, setAddresses] = useState<any[]>([]);
+  //Loading
+  const [loading, setLoading] = useState(false);
 
   const update = async () => {
+    //Loading(中)
+    setLoading(true);
+
     try {
       const gottenCode = await getaddressInfoAsync(zipcode);
       setAddresses(gottenCode);
     } catch (error) {
       alert(error);
     }
+
+    //Loading(完)
+    setLoading(false);
   };
 
   //住所の情報をとってくる処理
@@ -54,7 +62,7 @@ export default function App() {
           onChangeText={(zipcode) => setZipcode(zipcode)}
           maxLength={7}
           keyboardType="numeric"
-          placeholder="郵便番号"
+          placeholder="郵便番号を入力"
         />
         <Pressable style={styles.postBtn} onPress={update}>
           <Text style={styles.btnText}>住所を取得</Text>
