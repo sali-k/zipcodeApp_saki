@@ -70,19 +70,23 @@ export default function App() {
       </View>
 
       <View style={styles.text}>
-        {/* {item}には、addressesの配列の要素が入っているので、必要な物だけを選択して表示 */}
-        <FlatList
-          data={addresses}
-          renderItem={({ item }) => (
-            <Text style={styles.addressText}>
-              {item.address1}
-              {item.address2}
-              {item.address3}
-            </Text>
-          )}
-          // 今回はidのようなユニークを持っていないので、indexを使ってkeyを指定。string形式なのでtoStringで指定。
-          keyExtractor={(item, index) => index.toString()}
-        />
+        {loading ? (
+          <Text style={styles.loadingText}>Loading</Text>
+        ) : (
+          //{item}には、addressesの配列の要素が入っているので、必要な物だけを選択して表示
+          <FlatList
+            data={addresses}
+            renderItem={({ item }) => (
+              <Text style={styles.addressText}>
+                {item.address1}
+                {item.address2}
+                {item.address3}
+              </Text>
+            )}
+            // 今回はidのようなユニークを持っていないので、indexを使ってkeyを指定。string形式なのでtoStringで指定。
+            keyExtractor={(item, index) => index.toString()}
+          />
+        )}
       </View>
 
       <StatusBar style="auto" />
@@ -125,6 +129,9 @@ const styles = StyleSheet.create({
     width: "80%",
     height: "50%",
     borderWidth: 2,
+  },
+  loadingText: {
+    fontSize: 25,
   },
   addressText: {
     fontSize: 25,
