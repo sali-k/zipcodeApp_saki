@@ -8,6 +8,7 @@ import {
   Pressable,
   Dimensions,
   SafeAreaView,
+  FlatList,
 } from "react-native";
 import axios from "axios";
 
@@ -21,7 +22,7 @@ const apiBaseURL = "https://zipcloud.ibsnet.co.jp/api/search";
 export default function App() {
   //住所を受け取るフック
   const [zipcode, setZipcode] = useState<string>("");
-  const [addresses, setAddresses] = useState([]);
+  const [addresses, setAddresses] = useState<any[]>([]);
 
   const update = async () => {
     try {
@@ -41,7 +42,7 @@ export default function App() {
 
     const responce = await axios(requestConfig);
     const datas = responce.data.results;
-    console.log(responce);
+    // console.log(responce);
     return datas;
   };
 
@@ -52,6 +53,8 @@ export default function App() {
           style={styles.postText}
           onChangeText={(zipcode) => setZipcode(zipcode)}
           maxLength={7}
+          keyboardType="numeric"
+          placeholder="郵便番号"
         />
         <Pressable style={styles.postBtn} onPress={update}>
           <Text style={styles.btnText}>住所を取得</Text>
@@ -59,7 +62,19 @@ export default function App() {
       </View>
 
       <View style={styles.text}>
-        <Text style={styles.addressText}>{addresses[1]}</Text>
+        {/* {item}には、addressesの配列の要素が入っているので、必要な物だけを選択して表示 */}
+        <FlatList
+          data={addresses}
+          renderItem={({ item }) => (
+            <Text style={styles.addressText}>
+              {item.address1}
+              {item.address2}
+              {item.address3}
+            </Text>
+          )}
+          // 今回はidのようなユニークを持っていないので、indexを使ってkeyを指定。string形式なのでtoStringで指定。
+          keyExtractor={(item, index) => index.toString()}
+        />
       </View>
 
       <StatusBar style="auto" />
@@ -76,12 +91,14 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     flexDirection: "row",
+    padding: "5%",
   },
   postText: {
     backgroundColor: "#fff",
     fontSize: 20,
-    width: "30%",
+    width: "50%",
     borderWidth: 2,
+    marginRight: "5%",
   },
   postBtn: {
     borderRadius: 7,
@@ -101,5 +118,7 @@ const styles = StyleSheet.create({
     height: "50%",
     borderWidth: 2,
   },
-  addressText: {},
+  addressText: {
+    fontSize: 25,
+  },
 });
