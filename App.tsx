@@ -1,29 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Pressable,
+  Dimensions,
+  SafeAreaView,
+} from "react-native";
+import axios from "axios";
+
+//スクリーン画面の高さと幅
+const screenHeight = Dimensions.get("screen").height;
+const screenwidth = Dimensions.get("screen").width;
+
+//API通信のベースURL
+const apiBaseURL = "https://zipcloud.ibsnet.co.jp/api/search";
 
 export default function App() {
-  const [value, setValue] = React.useState("");
-  const search = () => {};
+  //住所を受け取るフック
+  const [zipcode, setZipcode] = useState<string>("");
+  const [addresses, setAddresses] = useState([]);
+
+  const update = async () => {
+    try {
+      const gottenCode = await getaddressInfoAsync(zipcode);
+      setAddresses(gottenCode);
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  //住所の情報をとってくる処理
+  const getaddressInfoAsync = async (zipcode: string) => {
+    const requestConfig = {
+      baseURL: apiBaseURL,
+      params: { zipcode: zipcode },
+    };
+
+    const responce = await axios(requestConfig);
+    const datas = responce.data.results;
+    console.log(responce);
+    return datas;
+  };
+
   return (
-    <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => setValue(text)}
-        value={value}
-      />
-      <Pressable
-        style={styles.btn}
-        onPress={(search) => {
-          search;
-        }}
-      >
-        {/* <Pressable style={styles.btn} onPress={() => {}}> */}
-        <Text style={styles.btnText}>住所を取得</Text>
-      </Pressable>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.postContainer}>
+        <TextInput
+          style={styles.postText}
+          onChangeText={(zipcode) => setZipcode(zipcode)}
+          maxLength={7}
+        />
+        <Pressable style={styles.postBtn} onPress={update}>
+          <Text style={styles.btnText}>住所を取得</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.text}>
+        <Text style={styles.addressText}>{addresses[1]}</Text>
+      </View>
+
       <StatusBar style="auto" />
-      <Text style={styles.text}></Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -34,13 +74,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  input: {
+  postContainer: {
+    flexDirection: "row",
+  },
+  postText: {
     backgroundColor: "#fff",
-    width: 100,
-    height: 30,
+    fontSize: 20,
+    width: "30%",
     borderWidth: 2,
   },
-  btn: {
+  postBtn: {
     borderRadius: 7,
     width: 100,
     height: 30,
@@ -58,4 +101,5 @@ const styles = StyleSheet.create({
     height: "50%",
     borderWidth: 2,
   },
+  addressText: {},
 });
