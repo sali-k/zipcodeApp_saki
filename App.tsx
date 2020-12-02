@@ -71,7 +71,7 @@ export default function App() {
 
       <View style={styles.text}>
         {loading ? (
-          <Text style={styles.loadingText}>Loading</Text>
+          <Text style={styles.loadingText}>検索中です…</Text>
         ) : (
           //{item}には、addressesの配列の要素が入っているので、必要な物だけを選択して表示
           <FlatList
