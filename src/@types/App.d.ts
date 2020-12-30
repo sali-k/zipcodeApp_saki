@@ -1,0 +1,3 @@
+interface PostalCode {
+  zipcode: string;
+}
